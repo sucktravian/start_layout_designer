@@ -32,6 +32,16 @@ The goal of this project isn't to replace Microsoft's deployment methods. It sim
 
 Whether you're deploying layouts through Intune, Group Policy, provisioning packages, or another management solution, this tool helps generate the required configuration files without manually writing them yourself.
 
+### Microsoft Documentation
+
+If you'd like to understand the underlying Windows configuration formats used by this tool, Microsoft provides official documentation:
+
+- Start Menu Layouts:
+  https://learn.microsoft.com/en-us/windows/configuration/start/layout
+
+- Taskbar Pinned Apps:
+  https://learn.microsoft.com/en-us/windows/configuration/taskbar/pinned-apps
+
 ## Screenshot
 
 ![StartLayoutDesigner](screenshot/GUI.png)
@@ -68,43 +78,6 @@ The GUI has two tabs:
 
 - **Start Layout** — select apps and export `StartLayout.json`
 - **Taskbar** — select apps and export `TaskbarLayout.xml`
-
-### From the command line
-
-```powershell
-Import-Module StartLayoutDesigner
-
-$apps = Get-StartLayoutCandidateApp
-$selected = $apps | Where-Object Name -in 'Microsoft Edge', 'Settings', 'File Explorer'
-
-$selected | New-StartLayoutJson -Path .\StartLayout.json
-$selected | New-TaskbarLayoutXml -Replace -Path .\TaskbarLayout.xml
-```
-
-### Examples
-
-```powershell
-# Discover all pinnable apps
-Get-StartLayoutCandidateApp
-
-# Discover only common built-in Windows apps
-Get-StartLayoutCandidateApp -IncludeCommonWindowsApps
-
-# Build a Start Layout JSON
-$apps | New-StartLayoutJson -Path "$env:TEMP\StartLayout.json"
-
-# Build a Start Layout JSON that applies once (not re-applied on every logon)
-$apps | New-StartLayoutJson -ApplyOnce $true -Path "$env:TEMP\StartLayout.json"
-
-# Build a Taskbar Layout XML (replace existing pins)
-$apps | New-TaskbarLayoutXml -Replace -Path "$env:TEMP\TaskbarLayout.xml"
-
-# Build a Taskbar Layout XML for a specific region
-$apps | New-TaskbarLayoutXml -Region 'en-US' -Path "$env:TEMP\TaskbarLayout.xml"
-
-# Open the interactive GUI to design and export layouts
-Show-StartLayoutDesigner
-```
 
 ---
 
