@@ -16,19 +16,39 @@
 
 ---
 
+## Why I Built This
+
+I spend a lot of time deploying and customizing Windows environments, and one thing that always annoyed me was creating Start Menu and Taskbar layouts.
+
+Microsoft provides the tools and documentation to do it properly, but the process usually involves reading multiple documents, editing JSON and XML files by hand, testing deployments, finding mistakes, fixing them, and starting over.
+
+It works, but it isn't particularly enjoyable.
+
+I wanted a simple visual way to build layouts, see the result immediately, and export the files needed for deployment.
+
+So I built StartLayoutDesigner.
+
+The goal of this project isn't to replace Microsoft's deployment methods. It simply makes the layout creation process easier.
+
+Whether you're deploying layouts through Intune, Group Policy, provisioning packages, or another management solution, this tool helps generate the required configuration files without manually writing them yourself.
+
+## Screenshot
+
+![StartLayoutDesigner](screenshot/GUI.png)
+
+
 ## What It Does
 
-Manually crafting Windows 11 Start Layout JSON and Taskbar Layout XML is error-prone and tedious. This module handles discovery, building, and deploying those files.
+StartLayoutDesigner helps you create and deploy Windows 11 Start Menu and Taskbar layouts.
 
-This module:
+Features:
 
-- Discovers installed apps eligible for pinning using `Get-StartLayoutCandidateApp` (packaged apps, desktop shortcuts, and common Windows apps)
-- Generates a `LayoutModification.json` for the Windows 11 Start Menu via `New-StartLayoutJson`
-- Generates a `TaskbarLayoutModification.xml` for Taskbar policy via `New-TaskbarLayoutXml`
-- Provides an interactive WPF GUI designer via `Show-StartLayoutDesigner`
-- Deploys layouts to the registry and policy folders automatically
-
----
+- Discover pinnable applications automatically
+- Build Start Menu layout JSON files
+- Build Taskbar layout XML files
+- Design layouts through a WPF graphical interface
+- Export deployment-ready configuration files
+- Deploy layouts
 
 ## Installation
 
