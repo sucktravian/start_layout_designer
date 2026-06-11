@@ -90,7 +90,7 @@ Show-StartLayoutDesigner
 
 ## Requirements
 
-- Windows 10 / Windows 11
+- Windows 11
 - PowerShell 5.1+
 - .NET Framework 4.5+ (for WPF GUI)
 - Must be run as Administrator for policy deployment
