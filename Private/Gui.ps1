@@ -5,7 +5,7 @@ function Add-SldSelectedApp {
     )
 
     foreach ($item in @($SourceList.SelectedItems)) {
-        if ($TargetList.ItemsSource.Value -notcontains $item.Value) {
+        if (($TargetList.ItemsSource | ForEach-Object Value) -notcontains $item.Value) {
             [void]$TargetList.ItemsSource.Add($item)
         }
     }
@@ -56,7 +56,7 @@ function ConvertTo-SldFilteredCollection {
         }
     }
 
-    ,$collection
+    , $collection
 }
 
 function Update-SldAvailableApps {
@@ -212,154 +212,154 @@ function Show-SldWindow {
     $refreshTaskbarButton.Add_Click({ & $loadApps })
 
     $startSearchBox.Add_TextChanged({
-        Update-SldAvailableApps -List $availableStartList -Status $startSearchStatus -AllApps $appState.AllApps -Query $startSearchBox.Text
-    })
+            Update-SldAvailableApps -List $availableStartList -Status $startSearchStatus -AllApps $appState.AllApps -Query $startSearchBox.Text
+        })
     $taskbarSearchBox.Add_TextChanged({
-        Update-SldAvailableApps -List $availableTaskbarList -Status $taskbarSearchStatus -AllApps $appState.AllApps -Query $taskbarSearchBox.Text
-    })
+            Update-SldAvailableApps -List $availableTaskbarList -Status $taskbarSearchStatus -AllApps $appState.AllApps -Query $taskbarSearchBox.Text
+        })
     $startSearchBox.Add_KeyDown({
-        if ($_.Key -eq [System.Windows.Input.Key]::Enter) {
-            Add-SldSuggestedApp -SourceList $availableStartList -TargetList $selectedStartList
-            Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
-            $_.Handled = $true
-        }
-    })
+            if ($_.Key -eq [System.Windows.Input.Key]::Enter) {
+                Add-SldSuggestedApp -SourceList $availableStartList -TargetList $selectedStartList
+                Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
+                $_.Handled = $true
+            }
+        })
     $taskbarSearchBox.Add_KeyDown({
-        if ($_.Key -eq [System.Windows.Input.Key]::Enter) {
-            Add-SldSuggestedApp -SourceList $availableTaskbarList -TargetList $selectedTaskbarList
-            Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
-            $_.Handled = $true
-        }
-    })
+            if ($_.Key -eq [System.Windows.Input.Key]::Enter) {
+                Add-SldSuggestedApp -SourceList $availableTaskbarList -TargetList $selectedTaskbarList
+                Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
+                $_.Handled = $true
+            }
+        })
 
     $availableStartList.Add_MouseDoubleClick({
-        Add-SldSuggestedApp -SourceList $availableStartList -TargetList $selectedStartList
-        Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
-    })
+            Add-SldSuggestedApp -SourceList $availableStartList -TargetList $selectedStartList
+            Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
+        })
     $selectedStartList.Add_MouseDoubleClick({
-        Remove-SldSelectedApp -List $selectedStartList
-        Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
-    })
+            Remove-SldSelectedApp -List $selectedStartList
+            Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
+        })
     $addStartButton.Add_Click({
-        Add-SldSuggestedApp -SourceList $availableStartList -TargetList $selectedStartList
-        Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
-    })
+            Add-SldSuggestedApp -SourceList $availableStartList -TargetList $selectedStartList
+            Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
+        })
     $removeStartButton.Add_Click({
-        Remove-SldSelectedApp -List $selectedStartList
-        Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
-    })
+            Remove-SldSelectedApp -List $selectedStartList
+            Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
+        })
     $startUpButton.Add_Click({
-        Move-SldSelectedApp -List $selectedStartList -Direction Up
-        Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
-    })
+            Move-SldSelectedApp -List $selectedStartList -Direction Up
+            Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
+        })
     $startDownButton.Add_Click({
-        Move-SldSelectedApp -List $selectedStartList -Direction Down
-        Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
-    })
+            Move-SldSelectedApp -List $selectedStartList -Direction Down
+            Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
+        })
     $applyOnceCheck.Add_Click({
-        Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
-    })
+            Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
+        })
     $importStartButton.Add_Click({
-        $dialog = New-Object Microsoft.Win32.OpenFileDialog
-        $dialog.Filter = 'JSON files (*.json)|*.json|All files (*.*)|*.*'
-        if ($dialog.ShowDialog()) {
+            $dialog = New-Object Microsoft.Win32.OpenFileDialog
+            $dialog.Filter = 'JSON files (*.json)|*.json|All files (*.*)|*.*'
+            if ($dialog.ShowDialog()) {
+                try {
+                    $json = Get-Content -LiteralPath $dialog.FileName -Raw
+                    $imported = ConvertFrom-SldStartLayoutJson -Json $json -AvailableApp $appState.AllApps
+                    $selectedStartList.ItemsSource = $imported.Apps
+                    $applyOnceCheck.IsChecked = $imported.ApplyOnce
+                    Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
+                }
+                catch {
+                    Show-SldErrorMessage -Window $window -Message "Could not import Start layout JSON.`r`n$($_.Exception.Message)"
+                }
+            }
+        })
+    $exportStartButton.Add_Click({
+            $dialog = New-Object Microsoft.Win32.SaveFileDialog
+            $dialog.Filter = 'JSON files (*.json)|*.json|All files (*.*)|*.*'
+            $dialog.FileName = 'StartLayout.json'
+            if ($dialog.ShowDialog()) {
+                ConvertTo-SldStartLayoutJson -App @($selectedStartList.ItemsSource) -ApplyOnce $applyOnceCheck.IsChecked |
+                Set-Content -LiteralPath $dialog.FileName -Encoding UTF8
+            }
+        })
+    $deployStartButton.Add_Click({
             try {
-                $json = Get-Content -LiteralPath $dialog.FileName -Raw
-                $imported = ConvertFrom-SldStartLayoutJson -Json $json -AvailableApp $appState.AllApps
-                $selectedStartList.ItemsSource = $imported.Apps
-                $applyOnceCheck.IsChecked = $imported.ApplyOnce
-                Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
+                $json = ConvertTo-SldStartLayoutJson -App @($selectedStartList.ItemsSource) -ApplyOnce $applyOnceCheck.IsChecked
+                $result = Set-SldStartPinsPolicy -Json $json
+                $startPreview.Text = $json
+                $applyOnceNote = if ($applyOnceCheck.IsChecked) { "`r`n`r`nNote: Apply once is enabled, so Windows may not reapply later changes after the first successful application." } else { "" }
+                Show-SldInfoMessage -Window $window -Message "Start pins policy deployed for the current user.`r`n`r`nPolicy: $($result.Policy)`r`nFile: $($result.Path)`r`n`r`nSign out and sign in again for the Start layout to apply.$applyOnceNote"
             }
             catch {
-                Show-SldErrorMessage -Window $window -Message "Could not import Start layout JSON.`r`n$($_.Exception.Message)"
+                Show-SldErrorMessage -Window $window -Message "Could not deploy Start pins policy.`r`n$($_.Exception.Message)"
             }
-        }
-    })
-    $exportStartButton.Add_Click({
-        $dialog = New-Object Microsoft.Win32.SaveFileDialog
-        $dialog.Filter = 'JSON files (*.json)|*.json|All files (*.*)|*.*'
-        $dialog.FileName = 'StartLayout.json'
-        if ($dialog.ShowDialog()) {
-            ConvertTo-SldStartLayoutJson -App @($selectedStartList.ItemsSource) -ApplyOnce $applyOnceCheck.IsChecked |
-                Set-Content -LiteralPath $dialog.FileName -Encoding UTF8
-        }
-    })
-    $deployStartButton.Add_Click({
-        try {
-            $json = ConvertTo-SldStartLayoutJson -App @($selectedStartList.ItemsSource) -ApplyOnce $applyOnceCheck.IsChecked
-            $result = Set-SldStartPinsPolicy -Json $json
-            $startPreview.Text = $json
-            $applyOnceNote = if ($applyOnceCheck.IsChecked) { "`r`n`r`nNote: Apply once is enabled, so Windows may not reapply later changes after the first successful application." } else { "" }
-            Show-SldInfoMessage -Window $window -Message "Start pins policy deployed for the current user.`r`n`r`nPolicy: $($result.Policy)`r`nFile: $($result.Path)`r`n`r`nSign out and sign in again for the Start layout to apply.$applyOnceNote"
-        }
-        catch {
-            Show-SldErrorMessage -Window $window -Message "Could not deploy Start pins policy.`r`n$($_.Exception.Message)"
-        }
-    })
+        })
 
     $availableTaskbarList.Add_MouseDoubleClick({
-        Add-SldSuggestedApp -SourceList $availableTaskbarList -TargetList $selectedTaskbarList
-        Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
-    })
+            Add-SldSuggestedApp -SourceList $availableTaskbarList -TargetList $selectedTaskbarList
+            Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
+        })
     $selectedTaskbarList.Add_MouseDoubleClick({
-        Remove-SldSelectedApp -List $selectedTaskbarList
-        Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
-    })
+            Remove-SldSelectedApp -List $selectedTaskbarList
+            Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
+        })
     $addTaskbarButton.Add_Click({
-        Add-SldSuggestedApp -SourceList $availableTaskbarList -TargetList $selectedTaskbarList
-        Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
-    })
+            Add-SldSuggestedApp -SourceList $availableTaskbarList -TargetList $selectedTaskbarList
+            Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
+        })
     $removeTaskbarButton.Add_Click({
-        Remove-SldSelectedApp -List $selectedTaskbarList
-        Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
-    })
+            Remove-SldSelectedApp -List $selectedTaskbarList
+            Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
+        })
     $taskbarUpButton.Add_Click({
-        Move-SldSelectedApp -List $selectedTaskbarList -Direction Up
-        Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
-    })
+            Move-SldSelectedApp -List $selectedTaskbarList -Direction Up
+            Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
+        })
     $taskbarDownButton.Add_Click({
-        Move-SldSelectedApp -List $selectedTaskbarList -Direction Down
-        Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
-    })
+            Move-SldSelectedApp -List $selectedTaskbarList -Direction Down
+            Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
+        })
     $replaceTaskbarCheck.Add_Click({
-        Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
-    })
+            Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
+        })
     $importTaskbarButton.Add_Click({
-        $dialog = New-Object Microsoft.Win32.OpenFileDialog
-        $dialog.Filter = 'XML files (*.xml)|*.xml|All files (*.*)|*.*'
-        if ($dialog.ShowDialog()) {
+            $dialog = New-Object Microsoft.Win32.OpenFileDialog
+            $dialog.Filter = 'XML files (*.xml)|*.xml|All files (*.*)|*.*'
+            if ($dialog.ShowDialog()) {
+                try {
+                    $xml = Get-Content -LiteralPath $dialog.FileName -Raw
+                    $imported = ConvertFrom-SldTaskbarLayoutXml -Xml $xml -AvailableApp $appState.AllApps
+                    $selectedTaskbarList.ItemsSource = $imported.Apps
+                    $replaceTaskbarCheck.IsChecked = $imported.Replace
+                    Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
+                }
+                catch {
+                    Show-SldErrorMessage -Window $window -Message "Could not import taskbar XML.`r`n$($_.Exception.Message)"
+                }
+            }
+        })
+    $exportTaskbarButton.Add_Click({
+            $dialog = New-Object Microsoft.Win32.SaveFileDialog
+            $dialog.Filter = 'XML files (*.xml)|*.xml|All files (*.*)|*.*'
+            $dialog.FileName = 'TaskbarLayout.xml'
+            if ($dialog.ShowDialog()) {
+                ConvertTo-SldTaskbarLayoutXml -App @($selectedTaskbarList.ItemsSource) -Replace:$replaceTaskbarCheck.IsChecked |
+                Set-Content -LiteralPath $dialog.FileName -Encoding UTF8
+            }
+        })
+    $deployTaskbarButton.Add_Click({
             try {
-                $xml = Get-Content -LiteralPath $dialog.FileName -Raw
-                $imported = ConvertFrom-SldTaskbarLayoutXml -Xml $xml -AvailableApp $appState.AllApps
-                $selectedTaskbarList.ItemsSource = $imported.Apps
-                $replaceTaskbarCheck.IsChecked = $imported.Replace
-                Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
+                $xml = ConvertTo-SldTaskbarLayoutXml -App @($selectedTaskbarList.ItemsSource) -Replace:$replaceTaskbarCheck.IsChecked
+                $result = Set-SldTaskbarLayoutPolicy -Xml $xml
+                $taskbarPreview.Text = $xml
+                Show-SldInfoMessage -Window $window -Message "Taskbar layout policy deployed for the current user.`r`n`r`nPolicy: $($result.Policy)`r`nFile: $($result.Path)`r`n`r`nSign out and sign in again for the taskbar layout to apply."
             }
             catch {
-                Show-SldErrorMessage -Window $window -Message "Could not import taskbar XML.`r`n$($_.Exception.Message)"
+                Show-SldErrorMessage -Window $window -Message "Could not deploy taskbar layout policy.`r`n$($_.Exception.Message)"
             }
-        }
-    })
-    $exportTaskbarButton.Add_Click({
-        $dialog = New-Object Microsoft.Win32.SaveFileDialog
-        $dialog.Filter = 'XML files (*.xml)|*.xml|All files (*.*)|*.*'
-        $dialog.FileName = 'TaskbarLayout.xml'
-        if ($dialog.ShowDialog()) {
-            ConvertTo-SldTaskbarLayoutXml -App @($selectedTaskbarList.ItemsSource) -Replace:$replaceTaskbarCheck.IsChecked |
-                Set-Content -LiteralPath $dialog.FileName -Encoding UTF8
-        }
-    })
-    $deployTaskbarButton.Add_Click({
-        try {
-            $xml = ConvertTo-SldTaskbarLayoutXml -App @($selectedTaskbarList.ItemsSource) -Replace:$replaceTaskbarCheck.IsChecked
-            $result = Set-SldTaskbarLayoutPolicy -Xml $xml
-            $taskbarPreview.Text = $xml
-            Show-SldInfoMessage -Window $window -Message "Taskbar layout policy deployed for the current user.`r`n`r`nPolicy: $($result.Policy)`r`nFile: $($result.Path)`r`n`r`nSign out and sign in again for the taskbar layout to apply."
-        }
-        catch {
-            Show-SldErrorMessage -Window $window -Message "Could not deploy taskbar layout policy.`r`n$($_.Exception.Message)"
-        }
-    })
+        })
 
     Update-SldPreview -List $selectedStartList -Preview $startPreview -Mode Start -ApplyOnce $applyOnceCheck.IsChecked
     Update-SldPreview -List $selectedTaskbarList -Preview $taskbarPreview -Mode Taskbar -Replace $replaceTaskbarCheck.IsChecked
