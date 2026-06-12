@@ -1,13 +1,13 @@
 @{
     RootModule           = 'StartLayoutDesigner.psm1'
-    ModuleVersion        = '0.1.0'
+    ModuleVersion        = '0.1.1'
     GUID                 = '7d269b1a-a145-48d2-8f9d-fbb9c7c16442'
     Author               = 'sucktravian'
     CompanyName          = 'sucktravian'
     Copyright            = '(c) 2026 sucktravian'
     Description          = 'Visual designer and PowerShell module for creating Windows 11 Start Menu and Taskbar layouts. Generate deployment-ready JSON and XML files for Intune, Group Policy, and provisioning packages.'
-    PowerShellVersion    = '5.1'
-    CompatiblePSEditions = @('Desktop')
+    PowerShellVersion    = '7.0'
+    CompatiblePSEditions = @('Core')
     FunctionsToExport    = @(
         'Get-StartLayoutCandidateApp',
         'New-StartLayoutJson',
