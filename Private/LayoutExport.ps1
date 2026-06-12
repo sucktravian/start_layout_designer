@@ -168,7 +168,7 @@ function ConvertTo-SldStartLayoutJson {
     }
 
     [ordered]@{
-        applyOnce = $ApplyOnce
+        applyOnce  = $ApplyOnce
         pinnedList = @($pins)
     } | ConvertTo-Json -Depth 10
 }
@@ -270,8 +270,9 @@ function ConvertTo-SldTaskbarLayoutXml {
     $writer = [System.Xml.XmlWriter]::Create($memoryStream, $settings)
     $doc.Save($writer)
     $writer.Close()
-    [System.Text.Encoding]::UTF8.GetString($memoryStream.ToArray())
+    $xmlString = [System.Text.Encoding]::UTF8.GetString($memoryStream.ToArray())
     $memoryStream.Dispose()
+    return $xmlString
 }
 
 function ConvertFrom-SldTaskbarLayoutXml {

@@ -27,15 +27,6 @@ function Get-SldPolicyDeploymentFolder {
     $folder
 }
 
-function Get-SldPolicyDeploymentFolder {
-    $folder = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'StartLayoutDesigner\Policy'
-    if (-not (Test-Path -LiteralPath $folder)) {
-        [void](New-Item -ItemType Directory -Path $folder -Force)
-    }
-
-    $folder
-}
-
 function New-SldPolicyDeploymentPath {
     param(
         [Parameter(Mandatory)][string]$FileName,

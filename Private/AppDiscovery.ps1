@@ -80,7 +80,7 @@ function Merge-SldCandidateApps {
             TaskbarValue      = $taskbarPin.Value
             AlternatePins     = @($items | ForEach-Object {
                 [pscustomobject]@{
-                    SourceType = $_.SourceTypex
+                    SourceType = $_.SourceType
                     Value      = $_.Value
                     Category   = $_.Category
                 }
